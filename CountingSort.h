@@ -1,21 +1,11 @@
 #pragma once
 
-#include <string>
 #include <vector>
 #include <functional>
 #include <algorithm>
 
-using Year = int;
-
-struct Employee
-{
-  int YearsWithinCompany;
-  int BirthYear;
-  std::string Name;
-};
-
 template<typename Container>
-void CountingSort(Container& employees, std::function<int(const typename Container::value_type &)> value_func)
+void CountingSort(Container& employees, std::function<int(const typename Container::value_type&)> value_func)
 {
   using DataType = Container::value_type;
   // find the minimum and maximum value of the employees
@@ -69,5 +59,3 @@ void CountingSort(Container& employees, std::function<int(const typename Contain
     std::swap(new_positions[i], new_positions[new_i]);
   }
 }
-
-void CountingSort(std::vector<Employee>& employees, int maxYear);
