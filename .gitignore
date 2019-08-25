@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+/.vs
+/Debug
+/Release
+/x64
+/DataStructures_RadixSort.vcxproj.user
+/DataStructures_RadixSort.vcxproj.filters
+/DataStructures_RadixSort.vcxproj
+/DataStructures_RadixSort.sln
