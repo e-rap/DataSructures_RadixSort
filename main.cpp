@@ -45,41 +45,34 @@ void PrintEmployees(Container& employees)
   }
 }
 
-//class EmployeeComparator
-//{
-//public:
-//  EmployeeComparator(std::function<int(const Employee&)> func)
-//    : func(std::move(func))
-//  {
-//  }
-//  bool operator()(const Employee& a, const Employee& b) const
-//  {
-//    return (func(a) < func(b));
-//  }
-//private:
-//  std::function<int(const Employee&)> func;
-//};
-
-template<typename FunctionType>
-std::function<int(const Employee& a, const Employee& b)> EmployeeComparator(FunctionType func)
+/**
+ * creates a compare function for employee objects based on
+ * the output of the value function
+ *
+ * @param value_func[in] function to return value to compare by
+ * @returns compare function of type CompareFunc
+ */
+template<typename ValueFunc>
+CompareFunc EmployeeComparator(ValueFunc value_func)
 {
-  auto comp{ [](const Employee& a, const Employee& b) { return GetBirthYear(a) < GetBirthYear(b); } };
-  return comp;
+  auto compare_func{ [](const Employee& a, const Employee& b)
+  {
+    return GetBirthYear(a) < GetBirthYear(b);
+  } };
+  return compare_func;
 }
 
 /** Main Test Function */
 int main()
 {
 
-
+  /* Constants */
   const int num_employees{ 20 };
   const int min_years{ 0 };
   const int max_years{ 10 };
-
   const int min_birth{ 1980 };
   const int max_birth{ 1990 };
 
-  EmployeeContainer employees{};
 
   RandomGenerator rg{};
 
@@ -88,6 +81,7 @@ int main()
    *******************************************/
 
    // generate random vector of employees
+  EmployeeContainer employees{};
   for (size_t i{ 0 }; i < num_employees; ++i)
   {
     employees.push_back(
