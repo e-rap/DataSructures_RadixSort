@@ -17,7 +17,8 @@ template<typename Container>
 std::tuple<int, int> FindMinMax(Container& objects, std::function<int(const typename Container::value_type&) > value_func)
 {
   using DataType = Container::value_type;
-  auto comp{ [value_func](const DataType& a, const DataType& b) {return value_func(a) < value_func(b); } };
+
+  auto comp = [value_func](const DataType& a, const DataType& b) {return value_func(a) < value_func(b); };
   auto min_max_iters{ std::minmax_element(objects.cbegin(), objects.cend(), comp) };
   auto min_value = value_func(*min_max_iters.first);
   auto max_value = value_func(*min_max_iters.second);
@@ -25,7 +26,7 @@ std::tuple<int, int> FindMinMax(Container& objects, std::function<int(const type
 }
 
 /******************************************************************************
- * sorts a container of objects by the output of function value_func using the 
+ * sorts a container of objects by the output of function value_func using the
  * counting sort algorithm
  *
  * Time complexity O(n + k)
@@ -33,7 +34,7 @@ std::tuple<int, int> FindMinMax(Container& objects, std::function<int(const type
  * k = max int value - min int value + 1
  *
  * @param objects[in,out] STL container of objects to be sorted.
- * @param value_func[in] a function which returns int value to be sorted 
+ * @param value_func[in] a function which returns int value to be sorted
  *                       from an object within the container objects.
  *****************************************************************************/
 template<typename Container>
