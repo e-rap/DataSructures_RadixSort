@@ -4,15 +4,23 @@
 #include <functional>
 #include <algorithm>
 
+
+// General Counting Sort algoritm
+// n = number of objects
+// k = max int value - min int value + 1
+// Time complexity O(n + k)
+
+// value_func returns int value to be sorted from element within objects 
 template<typename Container>
-void CountingSort(Container& employees, std::function<int(const typename Container::value_type&)> value_func)
+void CountingSort(Container& objects, std::function<int(const typename Container::value_type&)> value_func)
 {
   using DataType = Container::value_type;
-  // find the minimum and maximum value of the employees
+
+  // find the minimum and maximum value of the objects
   auto comp{ [value_func](const DataType& a, const DataType& b) {return value_func(a) < value_func(b); } };
-  auto min_max_iters{ std::minmax_element(employees.cbegin(), employees.cend(), comp) };
-  auto min_value = value_func(*min_max_iters.first);
-  auto max_value = value_func(*min_max_iters.second);
+  auto min_max_iters{ std::minmax_element(objects.cbegin(), objects.cend(), comp) };
+  auto min_value{ value_func(*min_max_iters.first) };
+  auto max_value{ value_func(*min_max_iters.second) };
 
   // calculate offset for arbitrary range of values
   int offset{ (min_value >= 0) ? (min_value) : (-min_value) };
@@ -23,14 +31,14 @@ void CountingSort(Container& employees, std::function<int(const typename Contain
   value_counts.resize(size);
 
   // initialize new_positions vector
-  std::vector<size_t> new_positions{};
-  new_positions.resize(employees.size());
+  std::vector<DataType> new_order{};
+  new_order.resize(objects.size());
 
   // count occurrences of each value
-  for (auto& employee : employees)
+  for (auto& object : objects)
   {
-    auto value = value_func(employee);
-    value_counts[value - offset] += 1;
+    int value = value_func(object);
+    value_counts[static_cast<size_t>(static_cast<size_t>(value - offset))] += 1;
   }
 
   // accumulate sum with previous elements
@@ -39,33 +47,16 @@ void CountingSort(Container& employees, std::function<int(const typename Contain
     value_counts[i] += value_counts[i - 1];
   }
 
-  //shift all elements to the right
-  std::rotate(value_counts.rbegin(), value_counts.rbegin() + 1, value_counts.rend());
-  value_counts[0] = 0;
-
-  // find new positions for original employees
-  for (size_t i{ 0 }; i < employees.size(); ++i)
+  // move elements to new positions in temp vector
+  for (size_t i{ objects.size() }; i > 0; --i)
   {
-    auto value = value_func(employees[i]);
-    auto index = value_counts[value - offset];
-    value_counts[value - offset] += 1;
-    new_positions[i] = index;
+    size_t j{ i - 1 };
+    int value = value_func(objects[j]);
+    int index = static_cast<size_t>(value - offset);
+    new_order[value_counts[index] - 1] = std::move(objects[j]);
+    value_counts[index] -= 1;
   }
 
-  // update employees with new positions
-  for (size_t i{ 0 }; i < employees.size(); ++i)
-  {
-    auto new_i = new_positions[i];
-    std::swap(employees[i], employees[new_i]);
-    std::swap(new_positions[i], new_positions[new_i]);
-  }
+  // move to original vector
+  objects = std::move(new_order);
 }
-
-//template<typename Container>
-//void CountingSort(Container& employees);
-
-//template<typename Container>
-//void CountingSort(Container& employees)
-//{
-//  CountingSort(employees, [](const typename Container::value_type & val) {return val; };)
-//}
