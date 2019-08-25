@@ -167,9 +167,19 @@ int main()
   auto count_sorted{ std::is_sorted(employees.cbegin(),employees.cend(),birth_year_comp) };
   auto stl_sorted{ std::is_sorted(employees2.cbegin(), employees2.cend(),birth_year_comp) };
 
+
   std::cout << "\n";
   std::cout << "counting sort time: " << count_time << " sorted?: " << count_sorted << "\n";
   std::cout << "std::sort time: " << stl_time << " sorted?: " << stl_sorted << "\n";
+
+  // Answers for questions about counting sort
+  std::cout << "\n";
+  std::cout << "Which sorting algorithm is more efficient in this case?\n\n";
+  std::cout << "std::sort is more efficent, counting sort is not because of the range of birth year values (0 to 1990).\n";
+  std::cout << "However, my implementation of counting sort utilizes only the range between max and min birth years for\n";
+  std::cout << "all employees. therefore with a max year of 1990 and min year of 1980 only 10 values are mapped instead\n";
+  std::cout << "of 1991 values\n";
+  std::cout << "\n";
 
   /******************************************
    *           Profile Radix Sort           *
@@ -198,5 +208,21 @@ int main()
   std::cout << "radix sort time: " << radix_time << " sorted?: " << radix_sorted << "\n";
   std::cout << "std::sort time: " << stl_time << " sorted?: " << stl_sorted << "\n";
 
+  // Answers for questions about radix sort
+  std::cout << "\n";
+  std::cout << "Which sorting algorithm is more efficient in this case?\n\n";
+  std::cout << "std::sort is more efficent, my implmentation of radix sort is not as fast.\n";
+  std::cout << "if you compare radix sort vs counting sort, radix sort is still techincally slower because the overhead\n";
+  std::cout << "of sortingeach digit within the birth year. Since my counting sort maps 1980 to 1990 with 10 values, it is faster\n";
+  std::cout << "differnce in speed should be:\n";
+  std::cout << "CountingSort = O(n + m) where m is the number of mapped values and n is the number of employees.\n";
+  std::cout << "RadixSort = O(d * (n + m)) where m is the number of mapped values, n is the number of employees\n";
+  std::cout << "and d is the number of digits within the value sorted\n";
+  std::cout << "therefore, CountingSort = O(200,011) | RadixSort = O(4*(200,009) = O(800,036)\n";
+  std::cout << "Counting Sort is faster in my case";
+  std::cout << "However, my implementation of counting sort utilizes only the range between max and min birth years for\n";
+  std::cout << "all employees. therefore with a max year of 1990 and min year of 1980 only 10 values are mapped instead\n";
+  std::cout << "of 1991 values\n";
+  std::cout << "\n";
 
 }

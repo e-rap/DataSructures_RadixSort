@@ -29,9 +29,9 @@ std::tuple<int, int> FindMinMax(Container& objects, std::function<int(const type
  * sorts a container of objects by the output of function value_func using the
  * counting sort algorithm
  *
- * Time complexity O(n + k)
+ * Time complexity O(n + m)
  * n = number of objects
- * k = max int value - min int value + 1
+ * m = max int value - min int value + 1 (number of mapped values)
  *
  * @param objects[in,out] STL container of objects to be sorted.
  * @param value_func[in] a function which returns int value to be sorted

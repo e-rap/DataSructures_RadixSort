@@ -46,10 +46,10 @@ int GetDigit(DataType number, int position)
  * sorts a container of objects by the output of function value_func using the
  * radix sort algorithm
  *
- * Time complexity O(d * (n + k))
+ * Time complexity O(d * (n + m))
  * d = maximum number of digits
  * n = number of objects
- * k = 10 (number of values from 0 to 9)
+ * m = 10 (number of values mapped from 0 to 9)
  *
  * @param objects[in,out] STL container of objects to be sorted.
  * @param value_func[in] a function which returns int value to be sorted
