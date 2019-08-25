@@ -3,24 +3,46 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <tuple>
 
+/******************************************************************************
+ * finds the minimum and maximum value within the container of
+ * objects and returns as an std::tuple(max_value,min_value).
+ *
+ * @param objects[in,out] STL container of objects to be sorted.
+ * @param value_func[in] a function which returns int value to be sorted
+ *                       from an object within the container objects.
+ *****************************************************************************/
+template<typename Container>
+std::tuple<int, int> FindMinMax(Container& objects, std::function<int(const typename Container::value_type&) > value_func)
+{
+  using DataType = Container::value_type;
+  auto comp{ [value_func](const DataType& a, const DataType& b) {return value_func(a) < value_func(b); } };
+  auto min_max_iters{ std::minmax_element(objects.cbegin(), objects.cend(), comp) };
+  auto min_value = value_func(*min_max_iters.first);
+  auto max_value = value_func(*min_max_iters.second);
+  return std::make_tuple(min_value, max_value);
+}
 
-// General Counting Sort algoritm
-// n = number of objects
-// k = max int value - min int value + 1
-// Time complexity O(n + k)
-
-// value_func returns int value to be sorted from element within objects 
+/******************************************************************************
+ * sorts a container of objects by the output of function value_func using the 
+ * counting sort algorithm
+ *
+ * Time complexity O(n + k)
+ * n = number of objects
+ * k = max int value - min int value + 1
+ *
+ * @param objects[in,out] STL container of objects to be sorted.
+ * @param value_func[in] a function which returns int value to be sorted 
+ *                       from an object within the container objects.
+ *****************************************************************************/
 template<typename Container>
 void CountingSort(Container& objects, std::function<int(const typename Container::value_type&)> value_func)
 {
   using DataType = Container::value_type;
 
   // find the minimum and maximum value of the objects
-  auto comp{ [value_func](const DataType& a, const DataType& b) {return value_func(a) < value_func(b); } };
-  auto min_max_iters{ std::minmax_element(objects.cbegin(), objects.cend(), comp) };
-  auto min_value{ value_func(*min_max_iters.first) };
-  auto max_value{ value_func(*min_max_iters.second) };
+  auto [min_value, max_value] = FindMinMax(objects, value_func);
 
   // calculate offset for arbitrary range of values
   int offset{ (min_value >= 0) ? (min_value) : (-min_value) };
