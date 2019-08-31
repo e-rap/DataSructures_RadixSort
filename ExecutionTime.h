@@ -4,7 +4,7 @@
 
 
 /******************************************************************************
- * calculates the execution time of a function func
+ * calculates the execution time of function func
  *
  * @param func[in] function under examination
  * @returns execution time in microseconds

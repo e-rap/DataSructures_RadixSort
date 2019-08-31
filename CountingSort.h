@@ -6,26 +6,6 @@
 #include <tuple>
 
 /******************************************************************************
- * finds the minimum and maximum value within the container of
- * objects and returns as an std::tuple(max_value,min_value).
- *
- * @param objects[in,out] STL container of objects to be sorted.
- * @param value_func[in] a function which returns int value to be sorted
- *                       from an object within the container objects.
- *****************************************************************************/
-template<typename Container>
-std::tuple<int, int> FindMinMax(Container& objects, std::function<int(const typename Container::value_type&) > value_func)
-{
-  using DataType = Container::value_type;
-
-  auto comp = [value_func](const DataType& a, const DataType& b) {return value_func(a) < value_func(b); };
-  auto min_max_iters{ std::minmax_element(objects.cbegin(), objects.cend(), comp) };
-  auto min_value = value_func(*min_max_iters.first);
-  auto max_value = value_func(*min_max_iters.second);
-  return std::make_tuple(min_value, max_value);
-}
-
-/******************************************************************************
  * sorts a container of objects by the output of function value_func using the
  * counting sort algorithm
  *
@@ -38,12 +18,12 @@ std::tuple<int, int> FindMinMax(Container& objects, std::function<int(const type
  *                       from an object within the container objects.
  *****************************************************************************/
 template<typename Container>
-void CountingSort(Container& objects, std::function<int(const typename Container::value_type&)> value_func)
+void CountingSort(Container& objects,
+                  const int min_value,
+                  const int max_value,
+                  std::function<int(const typename Container::value_type&)> value_func)
 {
   using DataType = Container::value_type;
-
-  // find the minimum and maximum value of the objects
-  auto [min_value, max_value] = FindMinMax(objects, value_func);
 
   // calculate offset for arbitrary range of values
   int offset{ (min_value >= 0) ? (min_value) : (-min_value) };
@@ -60,7 +40,7 @@ void CountingSort(Container& objects, std::function<int(const typename Container
   // count occurrences of each value
   for (auto& object : objects)
   {
-    int value = value_func(object);
+    int value{ value_func(object) };
     value_counts[static_cast<size_t>(static_cast<size_t>(value - offset))] += 1;
   }
 
@@ -74,8 +54,8 @@ void CountingSort(Container& objects, std::function<int(const typename Container
   for (size_t i{ objects.size() }; i > 0; --i)
   {
     size_t j{ i - 1 };
-    int value = value_func(objects[j]);
-    int index = static_cast<size_t>(value - offset);
+    int value{ value_func(objects[j]) };
+    int index{ value - offset };
     new_order[value_counts[index] - 1] = std::move(objects[j]);
     value_counts[index] -= 1;
   }

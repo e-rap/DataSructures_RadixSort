@@ -80,8 +80,9 @@ int main()
    *              Counting Sort              *
    *******************************************/
 
-   // generate random vector of employees
   EmployeeContainer employees{};
+
+  // generate random vector of employees.
   for (size_t i{ 0 }; i < num_employees; ++i)
   {
     employees.push_back(
@@ -94,23 +95,24 @@ int main()
   std::cout << "___Counting Sort___" << "\n";
   std::cout << "Original Unsorted Input\n";
   PrintEmployees(employees);
-
-  CountingSort(employees, GetYearsWithinCompany);
+  auto [min, max] = FindMinMax(employees, GetYearsWithinCompany);
+  CountingSort(employees, min, max, GetYearsWithinCompany);
   std::cout << "\n";
   std::cout << "Sort by Years within company\n";
   PrintEmployees(employees);
-
-  CountingSort(employees, GetBirthYear);
+  std::tie(min, max) = FindMinMax(employees, GetBirthYear);
+  CountingSort(employees, min, max, GetBirthYear);
   std::cout << "\n";
   std::cout << "Sort by Birth Years\n";
   PrintEmployees(employees);
 
   /******************************************
-    *              Radix Sort               *
-    *****************************************/
+   *              Radix Sort                *
+   ******************************************/
 
-    // generate random vector of employees
   employees.clear();
+
+  // generate random vector of employees.
   for (size_t i{ 0 }; i < num_employees; ++i)
   {
     employees.push_back(
@@ -142,7 +144,7 @@ int main()
 
   const int num_employees_profile{ 200000 };
 
-  // generate random set of employees 
+  // generate random set of employees .
   employees.clear();
   for (size_t i{ 0 }; i < num_employees_profile; ++i)
   {
@@ -160,8 +162,8 @@ int main()
 
   auto birth_year_comp{ EmployeeComparator(GetBirthYear) };
   auto years_employed_comp{ EmployeeComparator(GetYearsWithinCompany) };
-
-  auto count_time{ ProfileFunction(CountingSort<EmployeeContainer>, employees, GetBirthYear) };
+  std::tie(min, max) = FindMinMax(employees, GetBirthYear);
+  auto count_time{ ProfileFunction(CountingSort<EmployeeContainer>, employees, min, max, GetBirthYear) };
   auto stl_time{ ProfileFunction(std::sort<Iterator,CompareFunc>, employees2.begin(),employees2.end(), birth_year_comp) };
 
   auto count_sorted{ std::is_sorted(employees.cbegin(),employees.cend(),birth_year_comp) };
@@ -172,7 +174,7 @@ int main()
   std::cout << "counting sort time: " << count_time << " sorted?: " << count_sorted << "\n";
   std::cout << "std::sort time: " << stl_time << " sorted?: " << stl_sorted << "\n";
 
-  // Answers for questions about counting sort
+  // Answers for questions about counting sort.
   std::cout << "\n";
   std::cout << "Which sorting algorithm is more efficient in this case?\n\n";
   std::cout << "std::sort is more efficent, counting sort is not because of the range of birth year values (0 to 1990).\n";
@@ -186,6 +188,7 @@ int main()
    *****************************************/
 
   employees.clear();
+  // Generate a random set of employees.
   for (size_t i{ 0 }; i < num_employees_profile; ++i)
   {
     employees.push_back(
@@ -197,8 +200,8 @@ int main()
   employees2.clear();
   employees2.resize(num_employees_profile);
   std::copy(employees.begin(), employees.end(), employees2.begin());
-
-  auto radix_time{ ProfileFunction(CountingSort<EmployeeContainer>, employees, GetBirthYear) };
+  std::tie(min, max) = FindMinMax(employees, GetBirthYear);
+  auto radix_time{ ProfileFunction(CountingSort<EmployeeContainer>, employees, min, max, GetBirthYear) };
   stl_time = ProfileFunction(std::sort<Iterator, CompareFunc>, employees2.begin(), employees2.end(), birth_year_comp);
 
   auto radix_sorted{ std::is_sorted(employees.cbegin(),employees.cend(),birth_year_comp) };
@@ -213,13 +216,13 @@ int main()
   std::cout << "Which sorting algorithm is more efficient in this case?\n\n";
   std::cout << "std::sort is more efficent, my implmentation of radix sort is not as fast.\n";
   std::cout << "if you compare radix sort vs counting sort, radix sort is still techincally slower because the overhead\n";
-  std::cout << "of sortingeach digit within the birth year. Since my counting sort maps 1980 to 1990 with 10 values, it is faster\n";
-  std::cout << "differnce in speed should be:\n";
+  std::cout << "of sorting each digit within the birth year. Since my counting sort maps 1980 to 1990 with 10 values,\n";
+  std::cout << "it is faster. Differnce in speed should be:\n";
   std::cout << "CountingSort = O(n + m) where m is the number of mapped values and n is the number of employees.\n";
   std::cout << "RadixSort = O(d * (n + m)) where m is the number of mapped values, n is the number of employees\n";
   std::cout << "and d is the number of digits within the value sorted\n";
   std::cout << "therefore, CountingSort = O(200,011) | RadixSort = O(4*(200,009) = O(800,036)\n";
-  std::cout << "Counting Sort is faster in my case";
+  std::cout << "Counting Sort is faster in my case\n";
   std::cout << "However, my implementation of counting sort utilizes only the range between max and min birth years for\n";
   std::cout << "all employees. therefore with a max year of 1990 and min year of 1980 only 10 values are mapped instead\n";
   std::cout << "of 1991 values\n";
